@@ -1,0 +1,11 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.bigger-number {
+  color: orange;
+  font-weight: bolder;
+  scale: 1.5;
+  translate: -1px;
+}

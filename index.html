@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>春聯會不會</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"
+    defer></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="main.js"></script>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <main x-data="players">
+
+    <div class="d-flex flex-column justify-content-center w-50 mx-auto gap-3 mt-3">
+      <h1 class="text-center mb-3">積分表</h1>
+
+      <template x-for="(player,index) in players" :key="player.uid">
+        <div class="d-flex flex-column align-items-center">
+          <div class="d-flex flex-row gap-4">
+            <button class="btn btn-danger" style="transform:scale(0.70,0.70)"
+              @dblclick="players = players.filter(p => player.uid != p.uid) ">X</button>
+            <span class="my-auto" x-text="index+1" :class="index + 1 <= 3 ? 'bigger-number' : '' "></span>
+            <input type="text" x-model="player.name" />
+            <div class="d-flex flex-row gap-2">
+              <button class="btn btn-secondary" @click.prevent="()=>{
+                            if(player.score == 0) return;
+                            player.score-=100;
+                          }">-</button>
+              <input type="text" x-model="player.score"
+                x-effect="localStorage.setItem('players',JSON.stringify(players));" />
+              <button class="btn btn-primary" @click.prevent="()=>{
+                          let score = Number(player.score);
+                          score += Number(100);
+                          player.score = score;
+                        }">+</button>
+
+            </div>
+          </div>
+          <hr class="w-50" />
+      </template>
+
+
+      <button class="btn btn-primary align-self-center" style="width:fit-content"
+        @click="players.push({ uid: self.crypto.randomUUID(), name: '新玩家', score: 0 })">加人</button>
+    </div>
+
+
+    </div>
+  </main>
+
+
+
+  <script>
+    const PLAYERS = [
+      { uid: self.crypto.randomUUID(), name: "Player 1", score: 0 },
+      { uid: self.crypto.randomUUID(), name: "Player 2", score: 0 },
+      { uid: self.crypto.randomUUID(), name: "Player 3", score: 0 }
+    ];
+
+
+    // Init Players
+    document.addEventListener('alpine:init', () => {
+      if (!localStorage.getItem('players')) localStorage.setItem('players', JSON.stringify(PLAYERS));
+      const players = JSON.parse(localStorage.getItem('players'));
+      players.sort((a, b) => b.score - a.score);
+
+      Alpine.data('players', () => ({
+
+        players: players
+      }))
+    })
+
+  </script>
+</body>
+
+
+</html>
